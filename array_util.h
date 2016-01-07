@@ -6,6 +6,8 @@ typedef struct array{
 
 typedef int(*MatchFunc)(void *,void *);
 typedef void(ConvertFunc)(void *,void *, void *);
+typedef void(OperationFunc)(void*, void*);
+typedef void*(ReducerFunc)(void*, void*, void*);
 
 ArrayUtil create(int,int);
 void insert(int *,int);
@@ -20,3 +22,5 @@ int count(ArrayUtil, MatchFunc*, void* hint);
 int filter(ArrayUtil, MatchFunc *, void *, void **, int);
 void map(ArrayUtil, ArrayUtil, ConvertFunc*, void*);
 void square(void*, void*, void*);
+void forEach(ArrayUtil, OperationFunc*, void*);
+void *reduce(ArrayUtil, ReducerFunc*, void*, void*);
