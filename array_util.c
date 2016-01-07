@@ -11,6 +11,12 @@ ArrayUtil create(int typeSize, int length){
   return *array;
 }
 
+void insert(int *arr,int length){
+  for (int i = 0; i < length; ++i) {
+    arr[i] = i+length;
+  }
+}
+
 int areEqual(ArrayUtil a, ArrayUtil b){
   int length;
   if(a.length>b.length)
@@ -44,43 +50,43 @@ void dispose(ArrayUtil util){
   free(util.base);
 }
 
-int isEven(void *hint, void *item){
-  int *num = (int *)item;
-  printf("item is:%d\n", *(int *)num);
-  return(*num%2==0);
-}
-
 void *findFirst(ArrayUtil util, MatchFunc *match, void *hint){
-  MatchFunc func = *match;
   for (int i = 0; i < util.length; ++i){
-    unsigned char *ele = (unsigned char *)util.base+i * util.typeSize;
-    if(func(&hint,ele)){
-      printf("%d\n", *ele);
-      return ele;
+    if((*match)(hint,util.base+i * util.typeSize)){
+      return util.base+i * util.typeSize;
     }
   }
-  printf("%d\n",0);
-  return 0;
+  return NULL;
 }
 
 void *findLast(ArrayUtil util, MatchFunc *match, void *hint){
-  MatchFunc func = *match;
   for (int i = util.length-1; i >=0 ; --i){
-    unsigned char *ele = (unsigned char *)util.base+i * util.typeSize;
-    if(func(&hint,ele)){
-      return ele;
+    if((*match)(hint,util.base+i * util.typeSize)){
+      return util.base+i * util.typeSize;
     }
   }
-  return 0;
+  return NULL;
 }
 
-int count(ArrayUtil util, MatchFunc* match, void* hint){
-  MatchFunc func = *match;int count=0;
+int count(ArrayUtil util, MatchFunc *match, void *hint){
+  int counter = 0;
   for (int i = 0; i < util.length; ++i){
-    unsigned char *ele = (unsigned char *)util.base+i * util.typeSize;
-    if(func(&hint,ele)){
-      count ++;
+    if((*match)(hint,util.base+i * util.typeSize)){
+      counter++;
     }
   }
-  return count;
+  return counter;
+}
+
+
+int filter(ArrayUtil util, MatchFunc* match, void *hint, void **destination, int maxItems ){
+  MatchFunc func = *match;int counter=0;
+  unsigned char **new_arr = (unsigned char **)destination;
+  for (int i = 0; i < util.length; ++i){
+    if((*match)(hint,util.base+i * util.typeSize)&&counter<maxItems){
+        new_arr[counter] = util.base+i * util.typeSize;
+        counter++;
+      }
+  }
+  return counter;
 }
