@@ -78,15 +78,19 @@ int count(ArrayUtil util, MatchFunc *match, void *hint){
   return counter;
 }
 
-
 int filter(ArrayUtil util, MatchFunc* match, void *hint, void **destination, int maxItems ){
-  MatchFunc func = *match;int counter=0;
-  unsigned char **new_arr = (unsigned char **)destination;
+  int counter=0;
   for (int i = 0; i < util.length; ++i){
     if((*match)(hint,util.base+i * util.typeSize)&&counter<maxItems){
-        new_arr[counter] = util.base+i * util.typeSize;
+        destination[counter] = util.base+i * util.typeSize;
         counter++;
       }
   }
   return counter;
+}
+
+void map(ArrayUtil source, ArrayUtil destination, ConvertFunc* convert, void* hint){
+  for (int i = 0; i < source.length; ++i){
+    (*convert)(&hint, (source.base+i * source.typeSize), (destination.base+i * destination.typeSize));
+  }
 }
