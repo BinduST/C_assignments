@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdlib.h>
 #include "linkedList.c"
 
 void test_createList(){
@@ -67,5 +68,105 @@ void test_forEach(){
 	add_to_list(&list,&ele4);
 	forEach(list,&increment);
 	assert((*(int *)list.head->value)==6);
+	assert((*(int *)list.tail->value)==12);
 	assert((int *)list.tail->next==0x0);
+}
+
+void test_getElementAt(){
+	LinkedList list = createList();
+	int ele1 = 5;
+	int ele2 = 7;
+	int ele3 = 9;
+	int ele4 = 11;
+	add_to_list(&list,&ele1);
+	add_to_list(&list,&ele2);
+	add_to_list(&list,&ele3);
+	add_to_list(&list,&ele4);
+	int *el1 = (int *)getElementAt(list,2);
+	assert(*el1 == 9);
+	int *el2 = (int *)getElementAt(list,5);
+	assert(el2 == 0);
+}
+
+void test_indexOf(){
+	LinkedList list = createList();
+	int ele1 = 4;
+	int ele2 = 2;
+	int ele3 = 1;
+	int ele4 = 2;
+	add_to_list(&list,&ele1);
+	add_to_list(&list,&ele2);
+	add_to_list(&list,&ele3);
+	add_to_list(&list,&ele4);
+	int num1 = 2, num2 = 5;
+	int index1 = indexOf(list,&num1);
+	assert(index1 == 1);	
+	int index2 = indexOf(list,&num2);
+	assert(index2 == -1);
+}
+
+void test_deleteElementAt(){
+	LinkedList list = createList();
+	int ele1 = 5;
+	int ele2 = 4;
+	int ele3 = 3;
+	int ele4 = 2;
+	int ele5 = 1;
+	int ele6 = 5;
+	int ele7 = 4;
+	int ele8 = 3;
+	int ele9 = 2;
+	int ele10 = 1;
+	add_to_list(&list,&ele1);
+	add_to_list(&list,&ele2);
+	add_to_list(&list,&ele3);
+	add_to_list(&list,&ele4);
+	add_to_list(&list,&ele5);
+	add_to_list(&list,&ele6);
+	add_to_list(&list,&ele7);
+	add_to_list(&list,&ele8);
+	add_to_list(&list,&ele9);
+	add_to_list(&list,&ele10);
+	int *el1 = (int *)deleteElementAt(&list,0);
+	assert(*el1 == 5);
+	int *el2 = (int *)deleteElementAt(&list,3);
+	assert(*el2 == 1);
+	int *el3 = (int *)deleteElementAt(&list,7);
+	assert(*el3 == 1);
+	assert(list.length==7);
+}
+
+void test_asArray(){
+	LinkedList list = createList();
+	int ele1 = 1;
+	int ele2 = 2;
+	int ele3 = 3;
+	int ele4 = 4;
+	add_to_list(&list,&ele1);
+	add_to_list(&list,&ele2);
+	add_to_list(&list,&ele3);
+	add_to_list(&list,&ele4);
+	void *arr[5];
+	int len_arr = asArray(list,arr,5);
+	assert(len_arr == 4);	
+	assert(*(int *)arr[0] == ele1);
+}
+
+int isEven(void* hint, void* item){
+  return *(int *)item%2==0;
+}
+
+void test_filter(){
+	LinkedList list = createList();
+	int ele1 = 1;
+	int ele2 = 2;
+	int ele3 = 3;
+	int ele4 = 4;
+	int hint = 9;
+	add_to_list(&list,&ele1);
+	add_to_list(&list,&ele2);
+	add_to_list(&list,&ele3);
+	add_to_list(&list,&ele4);
+	LinkedList new_list = filter(list,isEven,&hint);
+	assert(new_list.length == 2);
 }
