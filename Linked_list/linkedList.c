@@ -32,6 +32,10 @@ void *get_last_element(LinkedList list){
 	return list.tail->value;
 }
 
+void increment(void *ele){
+	*(int *)ele += 1;
+}
+
 void forEach(LinkedList list, ElementProcessor e){
 	Element *el = list.head;
 	while(el!=NULL){
@@ -41,7 +45,7 @@ void forEach(LinkedList list, ElementProcessor e){
 }
 
 void *getElementAt(LinkedList list, int index){
-	Element *ele = (Element *)list.head;
+	Element *ele = list.head;
 	for (int i = 0; i < list.length; ++i){
 		if(i==index)
 			return ele->value;
@@ -52,7 +56,7 @@ void *getElementAt(LinkedList list, int index){
 }
 
 int indexOf(LinkedList list, void *element){
-	Element *ele = (Element *)list.head;
+	Element *ele = list.head;
 	int el = *(int *)element;
 	for (int i = 0; i < list.length; ++i){
 		if(el == *(int *)ele->value)
@@ -64,7 +68,7 @@ int indexOf(LinkedList list, void *element){
 }
 
 void *deleteElementAt(LinkedList *list, int index){
-	Element *ele = (Element *)list->head;
+	Element *ele = list->head;
 	for (int i = 0; i < list->length; ++i){
 		if(index == 0){
 			list->head = ele->next;
@@ -90,7 +94,7 @@ void *deleteElementAt(LinkedList *list, int index){
 }
 
 int asArray(LinkedList list, void **arr, int maxElements){
-	Element *ele = (Element *)list.head;
+	Element *ele = list.head;
 	int limit = list.length > maxElements ? maxElements: list.length;
 	for (int i = 0; i < limit; ++i){
 		arr[i] = ele->value;
@@ -99,8 +103,12 @@ int asArray(LinkedList list, void **arr, int maxElements){
 	return limit;
 }
 
+int isEven(void* hint, void* item){
+  return *(int *)item%2==0;
+}
+
 LinkedList filter(LinkedList list, MatchFunc match, void *hint){
-	Element *ele = (Element *)list.head;
+	Element *ele = list.head;
 	LinkedList new_list = createList();
 	while(ele != NULL){
 		if(match(hint,ele->value)){
@@ -109,4 +117,52 @@ LinkedList filter(LinkedList list, MatchFunc match, void *hint){
 		ele = ele->next;
 	}
 	return new_list;
+}
+
+LinkedList reverse(LinkedList list){
+	Element *ele = list.head;
+	LinkedList reversed_list = createList();
+	for (int i = 0; i < list.length; ++i){
+		Element *e = (Element *)malloc(sizeof(Element));
+		e->value = ele->value;
+		e->next = NULL;
+		if(reversed_list.length == 0)
+			reversed_list.head = reversed_list.tail = e;
+		else{
+			e->next = reversed_list.head;
+			reversed_list.head = e;
+		}
+		reversed_list.length++;
+		ele = ele->next;
+	}
+	return reversed_list;
+}
+
+void square(void* hint, void* sourceItem, void* destinationItem){
+  *(int *)destinationItem = (*(int *)sourceItem) * (*(int *)sourceItem);
+}
+
+LinkedList map(LinkedList list, ConvertFunc convert, void *hint){
+	LinkedList dest_list = createList();
+	Element *src_ele = list.head;
+	int initial = 0;
+	for (int i = 0; i < list.length; ++i){
+		void *dest_ele = malloc(sizeof(void *));
+		convert(hint,src_ele->value,dest_ele);
+		add_to_list(&dest_list,dest_ele);
+		src_ele = src_ele->next;
+	}
+	return dest_list;
+}
+void *sum(void* hint, void* previousItem, void* item){
+	(*(int *)previousItem) += (*(int *)item);
+	return previousItem;
+}
+void *reduce(LinkedList list, Reducer reducerFunc, void *hint, void *initialValue){
+	Element *ele = list.head;
+	for (int i = 0; i < list.length; ++i){
+		reducerFunc(hint,initialValue,ele->value);
+		ele = ele->next;
+	}
+	return initialValue;
 }

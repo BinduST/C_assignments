@@ -52,10 +52,6 @@ void test_get_last_element(){
 	assert(list.length==2);
 }
 
-void increment(void *ele){
-	*(int *)ele += 1;
-}
-
 void test_forEach(){
 	LinkedList list = createList();
 	int ele1 = 5;
@@ -152,10 +148,6 @@ void test_asArray(){
 	assert(*(int *)arr[0] == ele1);
 }
 
-int isEven(void* hint, void* item){
-  return *(int *)item%2==0;
-}
-
 void test_filter(){
 	LinkedList list = createList();
 	int ele1 = 1;
@@ -169,4 +161,56 @@ void test_filter(){
 	add_to_list(&list,&ele4);
 	LinkedList new_list = filter(list,isEven,&hint);
 	assert(new_list.length == 2);
+}
+
+void test_reverse(){
+	LinkedList list = createList();
+	int ele1 = 1;
+	int ele2 = 2;
+	int ele3 = 3;
+	int ele4 = 4;
+	add_to_list(&list,&ele1);
+	add_to_list(&list,&ele2);
+	add_to_list(&list,&ele3);
+	add_to_list(&list,&ele4);
+	LinkedList new_list = reverse(list);
+	assert(*(int *)new_list.head->value == 4);
+	assert(*(int *)new_list.tail->value == 1);
+	assert(new_list.length == 4);
+}
+
+void test_map(){
+	LinkedList source_list = createList();
+	int ele1 = 1;
+	int ele2 = 2;
+	int ele3 = 3;
+	int ele4 = 4;
+	int hint = 10;
+	add_to_list(&source_list,&ele1);
+	add_to_list(&source_list,&ele2);
+	add_to_list(&source_list,&ele3);
+	add_to_list(&source_list,&ele4);
+	LinkedList destination_list = map(source_list,square,&hint);
+	Element *ele = destination_list.head;
+	assert(*(int *)destination_list.head->value == 1);
+	assert(*(int *)destination_list.head->next->value == 4);
+	assert(*(int *)destination_list.head->next->next->value == 9);
+	assert(*(int *)destination_list.tail->value == 16);
+	assert(destination_list.length == 4);
+}
+
+void test_reduce(){
+	LinkedList source_list = createList();
+	int ele1 = 1;
+	int ele2 = 2;
+	int ele3 = 3;
+	int ele4 = 4;
+	void *hint = malloc(sizeof(int));
+	void *intial = malloc(sizeof(int));
+	add_to_list(&source_list,&ele1);
+	add_to_list(&source_list,&ele2);
+	add_to_list(&source_list,&ele3);
+	add_to_list(&source_list,&ele4);
+	void *result = reduce(source_list,sum,hint,intial);
+	assert(*(int *)result == 10);
 }
